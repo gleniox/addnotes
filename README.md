@@ -1,4 +1,4 @@
-## addnotes Project
+## addnotes App
 The addnotes app is a (React.JS) application that allows you to add any kind of notes.
 
 ## App setup
