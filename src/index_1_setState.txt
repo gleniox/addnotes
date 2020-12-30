@@ -1,0 +1,42 @@
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+
+const App = (props) => {
+  const [state, setState] = useState({
+    count: props.count,
+    text: "",
+  });
+
+  const increment = () => {
+    setState({ ...state, count: state.count + 1 });
+  };
+
+  const decrement = () => {
+    setState({ ...state, count: state.count - 1 });
+  };
+
+  const reset = () => {
+    setState({ ...state, count: props.count });
+  };
+
+  return (
+    <div>
+      <p>
+        The current {state.text || "count"} is {state.count}
+      </p>
+      <button onClick={decrement}>-1</button>
+      <button onClick={increment}>+1</button>
+      <button onClick={reset}>Reset</button>
+      <input
+        value={state.text}
+        onChange={(e) => setState({ ...state, text: e.target.value })}
+      />
+    </div>
+  );
+};
+
+App.defaultProps = {
+  count: 0,
+};
+
+ReactDOM.render(<App count={2} />, document.getElementById("root"));

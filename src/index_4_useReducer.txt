@@ -1,0 +1,96 @@
+import React, { useState, useEffect, useReducer } from "react";
+import ReactDOM from "react-dom";
+
+const notesReducer = (state, action) => {
+  switch (action.type) {
+    case "POPULATE_NOTES":
+      console.log("Populate notes");
+      return action.notes;
+    case "ADD_NOTE":
+      console.log("Add note");
+      return [...state, { title: action.title, body: action.content }];
+    case "REMOVE_NOTE":
+      console.log("Remove note");
+      return state.filter((note) => note.title !== action.title);
+    default:
+      return state;
+  }
+};
+
+const NoteApp = () => {
+  // const [notes, setNotes] = useState([]);
+  const [notes, dispatch] = useReducer(notesReducer, []); // const [state, dispatch] = ...
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  const addNote = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: "ADD_NOTE",
+      title,
+      content,
+    });
+    // setNotes([...notes, { title, content }]);
+    setTitle("");
+    setContent("");
+  };
+
+  const removeNote = (title) => {
+    dispatch({ type: "REMOVE_NOTE", title });
+    // setNotes(notes.filter((note) => note.title !== title));
+  };
+
+  useEffect(() => {
+    const notes = JSON.parse(localStorage.getItem("notes"));
+
+    if (notes) {
+      dispatch({ type: "POPULATE_NOTES", notes: notes });
+      // setNotes(notesData);
+    }
+  }, []); //[] works like class method didmount
+
+  useEffect(() => {
+    localStorage.setItem("notes", JSON.stringify(notes));
+    // console.log("useEffect ran");
+  }, [notes]);
+
+  return (
+    <div>
+      <h1>Notes</h1>
+      <p>Add Note</p>
+      <form onSubmit={addNote}>
+        Title:{" "}
+        <input value={title} onChange={(e) => setTitle(e.target.value)} />
+        Text:{" "}
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+        />
+        <button>add note</button>
+      </form>
+      {notes.map((note) => (
+        <Note key={note.title} note={note} removeNote={removeNote} />
+      ))}
+    </div>
+  );
+};
+
+const Note = ({ note, removeNote }) => {
+  useEffect(() => {
+    console.log("Setting up effect!");
+    return () => {
+      console.log("Cleaning up effect!"); // cleaning-up works like class method didunmount
+    };
+  }, []);
+
+  return (
+    <div>
+      <h3>{note.title}</h3>
+      <p>{note.content}</p>
+      <button onClick={() => removeNote(note.title)}>x</button>
+    </div>
+  );
+};
+
+ReactDOM.render(<NoteApp />, document.getElementById("root"));
